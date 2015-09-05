@@ -16,8 +16,8 @@ var express = require('express')
 /**
 * CONFIGURATION
 * -------------------------------------------------------------------------------------------------
-* load configuration settings from ENV, then settings.json.  Contains keys for OAuth logins. See 
-* settings.example.json.  
+* load configuration settings from ENV, then settings.json.  Contains keys for OAuth logins. See
+* settings.example.json.
 **/
 nconf.env().file({file: 'settings.json'});
 
@@ -60,8 +60,8 @@ everyauth.
 //    appSecret(nconf.get('facebook:applicationSecret')).
 //    findOrCreateUser(
 //	function(session, accessToken, accessTokenExtra, fbUserMetadata){
-//	    return usersByFacebookId[fbUserMetadata.claimedIdentifier] || 
-//		(usersByFacebookId[fbUserMetadata.claimedIdentifier] = 
+//	    return usersByFacebookId[fbUserMetadata.claimedIdentifier] ||
+//		(usersByFacebookId[fbUserMetadata.claimedIdentifier] =
 //		 addUser('facebook', fbUserMetadata));
 //	}).
 //    redirectPath('/');
@@ -143,7 +143,7 @@ everyauth
         if(newUserAttrs.password != confirmPassword) errors.push('Passwords must match');
         if(usersByLogin[login]) errors.push('Login already taken');
 
-        // validate the recaptcha 
+        // validate the recaptcha
         var recaptcha = new Recaptcha(nconf.get('recaptcha:publicKey'), nconf.get('recaptcha:privateKey'), newUserAttrs.data);
         recaptcha.verify(function(success, error_code) {
             if(!success) {
@@ -163,7 +163,7 @@ everyauth
 // would be the place to start
 function addUser (source, sourceUser) {
   var user;
-  if (arguments.length === 1) { 
+  if (arguments.length === 1) {
     user = sourceUser = source;
     user.id = ++nextUserId;
     return usersById[nextUserId] = user;
@@ -214,6 +214,20 @@ app.use(require('./middleware/errorHandler')(errorOptions));
 
 
 
+
+app.all('/', function(request, response) {
+	restler.get('http://reddit.com/.json').on('complete', function(reddit) {
+		var titles = "<Response>";
+		for(var i=0; i<5; i++) {
+			titles += "<Sms>" + reddit.data.children[i].data.title + "</Sms>";
+		}
+		titles += "</Response>";
+		response.send(titles);
+	});
+});
+
+
+
 /**
 * ROUTING
 * -------------------------------------------------------------------------------------------------
@@ -229,7 +243,7 @@ require('./routes/global')(app);
 
 
 /**
-* CHAT / SOCKET.IO 
+* CHAT / SOCKET.IO
 * -------------------------------------------------------------------------------------------------
 * this shows a basic example of using socket.io to orchestrate chat
 **/
@@ -275,4 +289,3 @@ io.sockets.on('connection', function(socket) {
 everyauth.helpExpress(app);
 app.listen(process.env.PORT || 3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-
