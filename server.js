@@ -13,13 +13,15 @@ var express = require('express')
   , everyauth = require('everyauth')
   , nconf = require('nconf')
   , http = require('http')
-  , sql = require('msnodesql')
   , twilio = require('twilio')
   , fs = require('fs')
   , Recaptcha = require('recaptcha').Recaptcha;
 
-  var useTrustedConnection = false;
-  var client = new twilio.RestClient('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN');
+
+  var Request = require('tedious').Request;
+  var TYPES = require('tedious').TYPES;
+
+
 
 
 /**
@@ -37,31 +39,49 @@ nconf.env().file({file: 'settings.json'});
 * --------------------------------------------------------------------------------------------------
 *
 */
-var useTrustedConnection = false;
-var conn_str = "Driver={SQL Server Native Client 11.0};Server=tcp:t8czp9r1d4.database.windows.net;" +
-(useTrustedConnection == true ? "Trusted_Connection={Yes};" : "UID=tejasnarayan;PWD=Pennapps1;") +
-"Database={TextMedicine};"
-sql.open(conn_str, function (err, conn) {
-    if (err) {
-        console.log("Error opening the connection!");
-        return;
-    }
-    else
-      client.sms.messages.create({
-        to:'+14845350365',
-        from:'TWILIO_NUMBER',
-        body:'ahoy hoy! the database works motherfucker'
-        }, function(error, message) {
-        if (!error) {
-            console.log('Success! The SID for this SMS message is:');
-            console.log(message.sid);
-            console.log('Message sent on:');
-            console.log(message.dateCreated);
-        } else {
-            console.log('Oops! There was an error.');
-        }
-      });
+
+var Connection = require('tedious').Connection;
+var client = new twilio.RestClient('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN');
+var config = {
+    userName: 'tejasnarayan',
+    password: 'Pennapps1',
+    server: 't8czp9r1d4.database.windows.net',
+    // If you are on Microsoft Azure, you need this:
+    options: {encrypt: true, database: 'TextMedicine'}
+};
+
+var connection = new Connection(config);
+
+connection.on('connect', function(err) {
+// If no error, then good to proceed.
+    console.log("Connected");
+    selectUsers();
 });
+
+
+function selectUsers() {
+    request = new Request("SELECT * FROM users;", function(err) {
+    if (err) {
+        console.log(err);}
+    });
+    var result = "";
+    request.on('row', function(columns) {
+        columns.forEach(function(column) {
+          if (column.value === null) {
+            console.log('NULL');
+          } else {
+            result+= column.value + " ";
+          }
+        });
+        console.log(result);
+        result ="";
+    });
+
+    request.on('done', function(rowCount, more) {
+    console.log(rowCount + ' rows returned');
+    });
+    connection.execSql(request);
+}
 
 
 /**
@@ -265,9 +285,14 @@ app.use(require('./middleware/errorHandler')(errorOptions));
 app.post('/incoming', function(req, res) {
 	var message = req.body.Body;
 	var from = req.body.From;
-	sys.log('From: ' + from + ', Message: ' + message);
-	var twiml = '<?xml version="1.0" encoding="UTF-8" ?>\n<Response>\n<Sms>Thanks for your text, we\'ll be in touch.</Sms>\n</Response>';
-	res.send(twiml, {'Content-Type':'text/xml'}, 200);
+  sys.log('From: ' + from + ', Message: ' + message);
+  if (message == 'y' || message == 'Y' || message == 'Yes' || message == 'yes') {
+  	var twiml = '<?xml version="1.0" encoding="UTF-8" ?>\n<Response>\n<Sms>Thanks for your response!</Sms>\n</Response>';
+  } else {
+    var twiml = '<?xml version="1.0" encoding="UTF-8" ?>\n<Response>\n<Sms>Take your medicine!</Sms>\n</Response>';
+  }
+  res.send(twiml, {'Content-Type':'text/xml'}, 200);
+
 });
 
 

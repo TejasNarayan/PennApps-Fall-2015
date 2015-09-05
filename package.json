@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/TejasNarayan/PennApps-Fall-2015/issues"
   },
-  "homepage": "https://github.com/TejasNarayan/PennApps-Fall-2015"
+  "homepage": "https://github.com/TejasNarayan/PennApps-Fall-2015",
+  "dependencies": {
+    "seriate": "^0.5.1"
+  }
 }
