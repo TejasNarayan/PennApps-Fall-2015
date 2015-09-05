@@ -12,7 +12,14 @@ var express = require('express')
   , connect = require('connect')
   , everyauth = require('everyauth')
   , nconf = require('nconf')
+  , http = require('http')
+  , sql = require('msnodesql')
+  , twilio = require('twilio')
+  , fs = require('fs')
   , Recaptcha = require('recaptcha').Recaptcha;
+
+  var useTrustedConnection = false;
+  var client = new twilio.RestClient('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN');
 
 
 /**
@@ -22,6 +29,39 @@ var express = require('express')
 * settings.example.json.
 **/
 nconf.env().file({file: 'settings.json'});
+
+
+
+/**
+* SQL DATABASE –– AZURE
+* --------------------------------------------------------------------------------------------------
+*
+*/
+var useTrustedConnection = false;
+var conn_str = "Driver={SQL Server Native Client 11.0};Server=tcp:t8czp9r1d4.database.windows.net;" +
+(useTrustedConnection == true ? "Trusted_Connection={Yes};" : "UID=tejasnarayan;PWD=Pennapps1;") +
+"Database={TextMedicine};"
+sql.open(conn_str, function (err, conn) {
+    if (err) {
+        console.log("Error opening the connection!");
+        return;
+    }
+    else
+      client.sms.messages.create({
+        to:'+14845350365',
+        from:'TWILIO_NUMBER',
+        body:'ahoy hoy! the database works motherfucker'
+        }, function(error, message) {
+        if (!error) {
+            console.log('Success! The SID for this SMS message is:');
+            console.log(message.sid);
+            console.log('Message sent on:');
+            console.log(message.dateCreated);
+        } else {
+            console.log('Oops! There was an error.');
+        }
+      });
+});
 
 
 /**
