@@ -215,7 +215,7 @@ app.use(require('./middleware/errorHandler')(errorOptions));
 
 
 
-app.all('/', function(request, response) {
+app.all('/sms', function(request, response) {
 	restler.get('http://reddit.com/.json').on('complete', function(reddit) {
 		var titles = "<Response>";
 		for(var i=0; i<5; i++) {
