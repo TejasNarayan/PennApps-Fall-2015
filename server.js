@@ -5,6 +5,8 @@
 * include any modules you will use through out the file
 **/
 
+var sys = require('sys');
+
 var express = require('express')
   , less = require('less')
   , connect = require('connect')
@@ -214,18 +216,19 @@ app.use(require('./middleware/errorHandler')(errorOptions));
 
 
 
+/**
+* TWILIO ROUTES
+* ------------------------------------------------------------------------------------------------------------
+*
+*/
 
-app.all('/sms', function(request, response) {
-	restler.get('http://reddit.com/.json').on('complete', function(reddit) {
-		var titles = "<Response>";
-		for(var i=0; i<5; i++) {
-			titles += "<Sms>" + reddit.data.children[i].data.title + "</Sms>";
-		}
-		titles += "</Response>";
-		response.send(titles);
-	});
+app.post('/incoming', function(req, res) {
+	var message = req.body.Body;
+	var from = req.body.From;
+	sys.log('From: ' + from + ', Message: ' + message);
+	var twiml = '<?xml version="1.0" encoding="UTF-8" ?>\n<Response>\n<Sms>Thanks for your text, we\'ll be in touch.</Sms>\n</Response>';
+	res.send(twiml, {'Content-Type':'text/xml'}, 200);
 });
-
 
 
 /**
