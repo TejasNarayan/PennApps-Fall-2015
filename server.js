@@ -289,7 +289,8 @@ app.post('/incoming', function(req, res) {
   if (message == 'y' || message == 'Y' || message == 'Yes' || message == 'yes') {
   	var twiml = '<?xml version="1.0" encoding="UTF-8" ?>\n<Response>\n<Sms>Thanks for your response! (Y)</Sms>\n</Response>';
 
-    request = new Request("UPDATE messages SET messages.time_replied = GETDATE() FROM users WHERE users.id = messages.sent_to AND messages.time_replied IS NIL AND users.phone = " + from + ";", function(err) {
+    request = new Request("UPDATE messages SET messages.time_replied = GETDATE() FROM users WHERE users.id = messages.sent_to AND messages.time_replied IS NIL AND users.phone = " + from + ";" +
+    "UPDATE messages SET messages.reply = YES;", function(err) {
     if (err) {
         console.log(err);}
     });
