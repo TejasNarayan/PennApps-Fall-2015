@@ -10,6 +10,8 @@ html {
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
+
+
 body {
   margin: 0;
 }
@@ -1392,6 +1394,7 @@ pre code {
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
+  
 }
 @media (min-width: 768px) {
   .container {
@@ -4623,7 +4626,7 @@ a.badge:focus {
   padding: 30px 15px;
   margin-bottom: 30px;
   color: inherit;
-  background-color: #eee;
+  background-color: #C4D6D0;
 }
 .jumbotron h1,
 .jumbotron .h1 {

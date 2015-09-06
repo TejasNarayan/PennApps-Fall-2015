@@ -3,10 +3,17 @@
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
+.bkimg {
+    background-image: url(../assets/img/vibrating_phone.png); 
+    background-repeat: repeat-x;
+    display: inline-block;
+    background-size: cover;
 
+}
 
-
-
+.background {
+    background-color: #C4D6D0;   
+}
 
 
 
