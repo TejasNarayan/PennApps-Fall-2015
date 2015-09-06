@@ -287,13 +287,24 @@ app.post('/incoming', function(req, res) {
 	var from = req.body.From;
   sys.log('From: ' + from + ', Message: ' + message);
   if (message == 'y' || message == 'Y' || message == 'Yes' || message == 'yes') {
-  	var twiml = '<?xml version="1.0" encoding="UTF-8" ?>\n<Response>\n<Sms>Thanks for your response!</Sms>\n</Response>';
+  	var twiml = '<?xml version="1.0" encoding="UTF-8" ?>\n<Response>\n<Sms>Thanks for your response! (Y)</Sms>\n</Response>';
+
   } else {
-    var twiml = '<?xml version="1.0" encoding="UTF-8" ?>\n<Response>\n<Sms>Take your medicine!</Sms>\n</Response>';
+    var twiml = '<?xml version="1.0" encoding="UTF-8" ?>\n<Response>\n<Sms>Thanks for your response! (N)</Sms>\n</Response>';
+
   }
   res.send(twiml, {'Content-Type':'text/xml'}, 200);
 
 });
+
+function markUserAsYes() {
+
+}
+
+
+function markUserAsNo() {
+
+}
 
 
 /**
