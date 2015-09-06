@@ -13,7 +13,7 @@ var express = require('express')
   , everyauth = require('everyauth')
   , nconf = require('nconf')
   , http = require('http')
-  , twilio = require('twilio')('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN')
+  , twilio = require('twilio')
   , fs = require('fs')
   , Recaptcha = require('recaptcha').Recaptcha;
 
